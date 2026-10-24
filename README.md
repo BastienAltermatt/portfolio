@@ -21,6 +21,12 @@ Chaque étude présente le besoin métier, la démarche, les résultats et les l
 
 Python, pandas, scikit-learn, SQL, SQLite, Excel, Power BI, Power Query et DAX. La comparaison Pandera est présentée dans le cadre d’un prototype de validation.
 
+## Français et anglais
+
+Le bouton EN / FR permet de changer de langue, y compris depuis une étude ouverte. Le projet et le filtre sélectionnés sont conservés. Les dix études et les versions texte sont disponibles dans les deux langues. Les extraits de code conservent les noms de variables d’origine ; les graphiques gardent leurs libellés sources, accompagnés d’une légende traduite.
+
+La section Parcours présente les expériences professionnelles, la formation et des qualités de travail reliées à des exemples concrets.
+
 ## Consulter le site
 
 Ouvrir `index.html` dans un navigateur. Le site fonctionne sans installation et s’adapte aux écrans d’ordinateur et de téléphone.
@@ -32,9 +38,12 @@ Les études sont accessibles depuis les cartes. La touche Échap ferme une fiche
 | Fichier | Contenu |
 | --- | --- |
 | `index.html` | Accueil et présentation |
-| `app.js` | Contenu des études et interactions |
+| `index-en.html` | Accueil et parcours en anglais |
+| `app.js` | Contenu français des études et interactions |
+| `content-en.js` | Traductions anglaises des études |
 | `style.css` | Mise en page et styles |
-| `projets.html` | Version texte des études |
+| `projets.html` | Version texte française des études |
+| `projects.html` | Version texte anglaise des études |
 | `assets/` | Graphiques extraits des notebooks |
 | `favicon.svg` | Icône du site |
 

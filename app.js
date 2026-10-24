@@ -1,5 +1,5 @@
 'use strict';
-const projects = [
+const projectsFr = [
   {
     "id": "bottleneck-bi",
     "code": "P9",
@@ -644,46 +644,73 @@ const projects = [
     "source": "Documents de référence : expression des besoins P5 et présentation, notamment pages 6 à 9 et 12 à 15."
   }
 ];
+const currentLanguage = typeof document !== 'undefined' && document.documentElement.lang === 'en' ? 'en' : 'fr';
+function localiseProjects(language){
+ if(language==='fr')return projectsFr;
+ return projectsFr.map(p=>{
+  const tr=projectTranslations[p.id];
+  return {...p,...tr,figure:p.figure?{...p.figure,...tr.figure}:undefined,technical:p.technical?{...p.technical,...tr.technical}:undefined};
+ });
+}
+const projects=localiseProjects(currentLanguage);
+const interfaceCopy={
+ fr:{need:'Le besoin métier',highlights:'Repères de l’étude',data:'Les données et le périmètre',method:'La démarche',figure:'Ouvrir le graphique en grand, nouvel onglet',enlarge:'Ouvrir en grand',deliverables:'Les livrables',contribution:'La contribution',findings:'Résultats et décisions',code:'Extrait de code',limits:'Le recul méthodologique',case:'ÉTUDE DE CAS',read:'Lire l’étude de cas',status:n=>`${n} projet${n>1?'s':''} ${n>1?'principaux':'principal'} affiché${n>1?'s':''}`},
+ en:{need:'The business need',highlights:'Study highlights',data:'Data and scope',method:'The approach',figure:'Open the full-size chart in a new tab',enlarge:'View full size',deliverables:'Deliverables',contribution:'The contribution',findings:'Findings and decisions',code:'Code excerpt',limits:'Limitations and perspective',case:'CASE STUDY',read:'Read the case study',status:n=>`${n} main ${n===1?'project':'projects'} shown`}
+};
 function escapeHtml(value){return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');}
 function rowsMarkup(rows){return `<dl class="fact-list">${rows.map(([name,text])=>`<div><dt>${escapeHtml(name)}</dt><dd>${escapeHtml(text)}</dd></div>`).join('')}</dl>`;}
-function caseMarkup(p,headingId='case-title'){
- const esc=escapeHtml;
+function caseMarkup(p,headingId='case-title',language=currentLanguage){
+ const esc=escapeHtml,u=interfaceCopy[language];
  return `<p class="eyebrow">${esc(p.sector)}</p><h2 id="${headingId}">${esc(p.title)}</h2><p class="lead">${esc(p.question)}</p><div class="tags">${p.tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div>
- ${p.context?`<section class="case-section"><h3>Le besoin métier</h3><p>${esc(p.context)}</p></section>`:''}
- ${p.metrics?`<section class="case-section" aria-label="Repères de l’étude"><div class="case-metrics">${p.metrics.map(m=>`<div><strong>${esc(m.value)}</strong><span>${esc(m.label)}</span></div>`).join('')}</div><p class="metric-note">${esc(p.metricNote)}</p></section>`:''}
- ${p.facts?`<section class="case-section"><h3>Les données et le périmètre</h3>${rowsMarkup(p.facts)}</section>`:''}
- <section class="case-section"><h3>La démarche</h3><ol class="case-method">${p.method.map(m=>`<li>${esc(m)}</li>`).join('')}</ol></section>
- ${p.figure?`<figure class="case-figure"><a href="${esc(p.figure.src)}" target="_blank" rel="noopener" aria-label="Ouvrir le graphique en grand, nouvel onglet"><img src="${esc(p.figure.src)}" alt="${esc(p.figure.alt)}" loading="lazy"></a><figcaption>${esc(p.figure.caption)} <span>Ouvrir en grand ↗</span></figcaption></figure>`:''}
- <div class="case-columns"><section class="case-section"><h3>Les livrables</h3><p>${esc(p.delivery)}</p></section><section class="case-section"><h3>La contribution</h3><p>${esc(p.insight)}</p></section></div>
- ${p.findings?`<section class="case-section"><h3>Résultats et décisions</h3>${rowsMarkup(p.findings)}</section>`:''}
- ${p.technical?`<details class="technical"><summary>${esc(p.technical.title)}</summary><p class="eyebrow">${esc(p.technical.language)}</p><pre tabindex="0" aria-label="Extrait de code"><code>${esc(p.technical.code)}</code></pre><p>${esc(p.technical.explanation)}</p></details>`:''}
- <section class="case-section case-limit"><h3>Le recul méthodologique</h3><p>${esc(p.limit)}</p></section><p class="case-source">${esc(p.source)}</p>`;
+ ${p.context?`<section class="case-section"><h3>${u.need}</h3><p>${esc(p.context)}</p></section>`:''}
+ ${p.metrics?`<section class="case-section" aria-label="${u.highlights}"><div class="case-metrics">${p.metrics.map(m=>`<div><strong>${esc(m.value)}</strong><span>${esc(m.label)}</span></div>`).join('')}</div><p class="metric-note">${esc(p.metricNote)}</p></section>`:''}
+ ${p.facts?`<section class="case-section"><h3>${u.data}</h3>${rowsMarkup(p.facts)}</section>`:''}
+ <section class="case-section"><h3>${u.method}</h3><ol class="case-method">${p.method.map(m=>`<li>${esc(m)}</li>`).join('')}</ol></section>
+ ${p.figure?`<figure class="case-figure"><a href="${esc(p.figure.src)}" target="_blank" rel="noopener" aria-label="${u.figure}"><img src="${esc(p.figure.src)}" alt="${esc(p.figure.alt)}" loading="lazy"></a><figcaption>${esc(p.figure.caption)} <span>${u.enlarge} ↗</span></figcaption></figure>`:''}
+ <div class="case-columns"><section class="case-section"><h3>${u.deliverables}</h3><p>${esc(p.delivery)}</p></section><section class="case-section"><h3>${u.contribution}</h3><p>${esc(p.insight)}</p></section></div>
+ ${p.findings?`<section class="case-section"><h3>${u.findings}</h3>${rowsMarkup(p.findings)}</section>`:''}
+ ${p.technical?`<details class="technical"><summary>${esc(p.technical.title)}</summary><p class="eyebrow">${esc(p.technical.language)}</p><pre tabindex="0" aria-label="${u.code}"><code>${esc(p.technical.code)}</code></pre><p>${esc(p.technical.explanation)}</p></details>`:''}
+ <section class="case-section case-limit"><h3>${u.limits}</h3><p>${esc(p.limit)}</p></section><p class="case-source">${esc(p.source)}</p>`;
 }
 const grid = document.querySelector('#project-grid');
 const dialog = document.querySelector('#case-dialog');
 const content = document.querySelector('#case-content');
-let opener = null;
+let opener=null;
+let activeFilter='all';
+function updateLanguageLinks(){
+ const otherPage=currentLanguage==='fr'?'index-en.html':'index.html';
+ const query=activeFilter==='all'?'':'?filter='+encodeURIComponent(activeFilter);
+ document.querySelectorAll('[data-language-link]').forEach(a=>{a.href=otherPage+query+location.hash;});
+}
+function setFilter(filter,announce=true){
+ activeFilter=['all','bi','python','quality'].includes(filter)?filter:'all';
+ document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.filter===activeFilter)));
+ let count=0;grid.querySelectorAll('.card').forEach(c=>{c.hidden=activeFilter!=='all'&&c.dataset.category!==activeFilter;if(!c.hidden)count++;});
+ if(announce)document.querySelector('#filter-status').textContent=interfaceCopy[currentLanguage].status(count);
+ updateLanguageLinks();
+}
 function openCase(id,trigger){
  const p=projects.find(p=>p.id===id);if(!p)return;
  if(p.featured===false)document.querySelector('#more-projects').open=true;
+ else if(activeFilter!=='all'&&p.category!==activeFilter)setFilter('all');
  opener=trigger||document.querySelector(`[data-case="${id}"]`);
  content.innerHTML=caseMarkup(p);
  if(!dialog.open)dialog.showModal();
  dialog.scrollTop=0;document.body.classList.add('modal-open');
- document.querySelector('#close-dialog').focus();
+ document.querySelector('#close-dialog').focus();updateLanguageLinks();
 }
-function closeCase(preserveHash=false){if(!preserveHash&&projects.some(p=>p.id===location.hash.slice(1)))history.replaceState(null,'',location.pathname+location.search+'#projets');dialog.close();}
-function route(){const id=location.hash.slice(1);if(projects.some(p=>p.id===id))openCase(id);else if(dialog.open)closeCase(true);}
-function cardMarkup(p){return `<article class="card" data-category="${p.category}"><div class="cover ${p.category}" aria-hidden="true"><span class="cover-code">ÉTUDE DE CAS / ${p.code}</span><span class="cover-label">${p.label}</span><span class="cover-symbol">${p.symbol}</span></div><div class="card-body"><p class="eyebrow">${escapeHtml(p.sector)}</p><h3>${escapeHtml(p.title)}</h3><p>${escapeHtml(p.summary)}</p><div class="tags">${p.tags.map(t=>`<span>${escapeHtml(t)}</span>`).join('')}</div><button class="open-case" data-case="${p.id}" aria-haspopup="dialog" aria-label="Lire l’étude de cas ${escapeHtml(p.title)}">Lire l’étude de cas <span aria-hidden="true">↗</span></button></div></article>`;}
+function closeCase(preserveHash=false){
+ if(!preserveHash&&projects.some(p=>p.id===location.hash.slice(1)))history.replaceState(null,'',location.pathname+location.search+'#projets');
+ dialog.close();updateLanguageLinks();
+}
+function route(){const id=location.hash.slice(1);if(projects.some(p=>p.id===id))openCase(id);else if(dialog.open)closeCase(true);updateLanguageLinks();}
+function cardMarkup(p){const u=interfaceCopy[currentLanguage];return `<article class="card" data-category="${p.category}"><div class="cover ${p.category}" aria-hidden="true"><span class="cover-code">${u.case} / ${p.code}</span><span class="cover-label">${p.label.split('<br>').map(escapeHtml).join('<br>')}</span><span class="cover-symbol">${p.symbol}</span></div><div class="card-body"><p class="eyebrow">${escapeHtml(p.sector)}</p><h3>${escapeHtml(p.title)}</h3><p>${escapeHtml(p.summary)}</p><div class="tags">${p.tags.map(t=>`<span>${escapeHtml(t)}</span>`).join('')}</div><button class="open-case" data-case="${p.id}" aria-haspopup="dialog" aria-label="${u.read} ${escapeHtml(p.title)}">${u.read} <span aria-hidden="true">↗</span></button></div></article>`;}
 if(grid){
  grid.innerHTML=projects.filter(p=>p.featured!==false).map(cardMarkup).join('');
  document.querySelector('#complementary-grid').innerHTML=projects.filter(p=>p.featured===false).map(cardMarkup).join('');
+ setFilter(new URLSearchParams(location.search).get('filter')||'all',false);
  document.addEventListener('click',e=>{const b=e.target.closest('[data-case]');if(b){history.pushState(null,'','#'+b.dataset.case);openCase(b.dataset.case,b);}});
- document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
-  let n=0;grid.querySelectorAll('.card').forEach(c=>{c.hidden=b.dataset.filter!=='all'&&c.dataset.category!==b.dataset.filter;if(!c.hidden)n++;});
-  document.querySelector('#filter-status').textContent=`${n} projet${n>1?'s':''} ${n>1?'principaux':'principal'} affiché${n>1?'s':''}`;
- }));
+ document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>setFilter(b.dataset.filter)));
  document.querySelector('#close-dialog').addEventListener('click',()=>closeCase());
  dialog.addEventListener('cancel',e=>{e.preventDefault();closeCase();});
  dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeCase();}});
